@@ -44,7 +44,7 @@ int main()
     glViewport(0, 0, 800, 600); // 视口 左下角坐标 宽 高
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 注册回调函数 指示 每次窗口大小变换后，应该怎样操作
-    
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // 设置清屏颜色

@@ -97,7 +97,7 @@ int main()
 
     unsigned int VBO, VAO[2];
     glGenVertexArrays(2, VAO); // 自绑定起，后续的Buffer绑定配置 都相当于记录在了VAO上
-    glGenBuffers(2, &VBO);
+    glGenBuffers(1, &VBO);
 
     glBindVertexArray(VAO[0]);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);

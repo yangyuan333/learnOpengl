@@ -1,0 +1,2 @@
+../3rdParty/Eigen;../3rdParty/OPENGL/glm;../3rdParty/OPENGL/stb/include;../3rdParty/OPENGL/glad/include;../3rdParty/OPENGL/GLFW/include;$(IncludePath)
+../3rdParty/OPENGL/stb/lib;../3rdParty/OPENGL/GLFW/lib;$(IncludePath);$(LibraryPath)

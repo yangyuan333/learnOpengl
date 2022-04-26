@@ -20,7 +20,7 @@ enum Camera_Movement {
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float SPEED = 2.5f;
-const float SENSITIVITY = 0.1f;
+const float SENSITIVITY = 0.001f;
 const float ZOOM = 45.0f;
 
 class Camera
@@ -48,10 +48,10 @@ public:
 		* 根据相机当前的一级属性 获得 view 矩阵
 		*/
 		Eigen::Matrix4f viewMatrix;
-		viewMatrix.block(0, 0, 1, 3) = Right;
-		viewMatrix.block(1, 0, 1, 3) = Up;
-		viewMatrix.block(2, 0, 1, 3) = -1 * Front;
-		viewMatrix.row(4) = Eigen::Vector4f{ 0,0,0,1 };
+		viewMatrix.block(0, 0, 1, 3) = Right.transpose();
+		viewMatrix.block(1, 0, 1, 3) = Up.transpose();
+		viewMatrix.block(2, 0, 1, 3) = -1 * Front.transpose();
+		viewMatrix.row(3) = Eigen::Vector4f{ 0,0,0,1 }.transpose();
 		viewMatrix.block(0, 3, 3, 1) = -1 * Position;
 		return viewMatrix;
 	}

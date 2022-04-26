@@ -237,7 +237,7 @@ int main()
     Eigen::Matrix4f proMatrix = get_projection_matrix(45.0f, (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
     Eigen::Matrix4f modelMatrix;
 
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
+    // glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
 
     float weight = 0.0;
     while (!glfwWindowShouldClose(window))
@@ -262,7 +262,7 @@ int main()
                 );
             }
             ++i;
-
+            proMatrix = get_projection_matrix(45.0f, (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
             glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "model"), 1, GL_FALSE, modelMatrix.data());
             glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "view"), 1, GL_FALSE, viewMatrix.data());
             // glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(proj));

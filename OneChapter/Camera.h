@@ -2,14 +2,15 @@
 #define CAMERA_H
 
 #include <glad/glad.h>
-
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
 #include<Eigen/Eigen>
-
+#define MY_PI 3.1415926
 enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
@@ -20,7 +21,7 @@ enum Camera_Movement {
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float SPEED = 2.5f;
-const float SENSITIVITY = 0.001f;
+const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
 class Camera
@@ -42,19 +43,28 @@ public:
 		Pitch = pitch;
 		updateCameraVectors();
 	}
+
+	//glm::mat4 GetViewMatrix()
+	//{
+	//	return glm::lookAt(Position, Position + Front, Up);
+	//}
+
 	Eigen::Matrix4f GetViewMatrix()
 	{
 		/*
 		* 根据相机当前的一级属性 获得 view 矩阵
 		*/
-		Eigen::Matrix4f viewMatrix;
-		viewMatrix.block(0, 0, 1, 3) = Right.transpose();
-		viewMatrix.block(1, 0, 1, 3) = Up.transpose();
-		viewMatrix.block(2, 0, 1, 3) = -1 * Front.transpose();
-		viewMatrix.row(3) = Eigen::Vector4f{ 0,0,0,1 }.transpose();
-		viewMatrix.block(0, 3, 3, 1) = -1 * Position;
-		return viewMatrix;
+	
+		Eigen::Matrix4f transMatrix = Eigen::Matrix4f::Identity();
+		transMatrix.block(0, 3, 3, 1) = -1 * Position;
+
+		Eigen::Matrix4f rotMatrix = Eigen::Matrix4f::Identity();
+		rotMatrix.block(0, 0, 1, 3) = Right.transpose();
+		rotMatrix.block(1, 0, 1, 3) = Up.transpose();
+		rotMatrix.block(2, 0, 1, 3) = -1 * Front.transpose();
+		return rotMatrix * transMatrix;
 	}
+
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
 	{
 		/*
@@ -79,10 +89,8 @@ public:
 		*/
 		xoffset *= MouseSensitivity;
 		yoffset *= MouseSensitivity;
-
 		Yaw += xoffset;
 		Pitch += yoffset;
-
 		if (constrainPitch)
 		{
 			if (Pitch > 89.0f)
@@ -90,7 +98,6 @@ public:
 			if (Pitch < -89.0f)
 				Pitch = -89.0f;
 		}
-
 		updateCameraVectors();
 	}
 
@@ -130,9 +137,9 @@ private:
 		* Right + Front --> Up
 		*/
 		Eigen::Vector3f front;
-		front[1] = sin(Pitch);
-		front[0] = cos(Pitch) * cos(Yaw);
-		front[2] = cos(Pitch) * sin(Yaw);
+		front[1] = sin(Pitch * MY_PI / 180.0f);
+		front[0] = cos(Pitch * MY_PI / 180.0f) * cos(Yaw * MY_PI / 180.0f);
+		front[2] = cos(Pitch * MY_PI / 180.0f) * sin(Yaw * MY_PI / 180.0f);
 		Front = front.normalized();
 		Right = Front.cross(WorldUp).normalized();
 		Up = Right.cross(Front).normalized();

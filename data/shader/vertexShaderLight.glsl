@@ -6,7 +6,6 @@ layout(location = 2) in vec3 aNormal;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat4 normMatrix;
 
 out vec2 TexCoord;
 out vec3 worldPoint;

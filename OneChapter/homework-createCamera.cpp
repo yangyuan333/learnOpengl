@@ -17,10 +17,10 @@
 #define MY_PI 3.1415926
 int framebuffer_width = 800;
 int framebuffer_height = 600;
-double last_mouse_x = 0.0;
-double last_mouse_y = 0.0;
+double last_mouse_x = framebuffer_width/2.0f;
+double last_mouse_y = framebuffer_height/2.0f;
 bool first_use = true;
-Camera camera;
+Camera camera({0,0,3});
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -53,7 +53,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     camera.ProcessMouseMovement(xpos - last_mouse_x, last_mouse_y - ypos);
     last_mouse_x = xpos;
     last_mouse_y = ypos;
-    std::cout << "x_delta:" << xpos - last_mouse_x << "y_delta:" << last_mouse_y - ypos << std::endl;
+    //std::cout << "x_delta:" << xpos - last_mouse_x << "y_delta:" << last_mouse_y - ypos << std::endl;
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -72,6 +72,21 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
     view = translate * view;
 
     return view;
+}
+
+Eigen::Matrix4f get_model_matrix(float rotation_angle, Eigen::Vector3f axis, Eigen::Vector3f translation)
+{
+    Eigen::Matrix4f rotMatrix = Eigen::Matrix4f::Identity();
+    if (rotation_angle <= 1e-3f) {
+        rotMatrix.block(0,0,3,3) = Eigen::Matrix3f::Identity();
+    }
+    else {
+        Eigen::AngleAxisf AA(rotation_angle, axis/axis.norm());
+        rotMatrix.block(0, 0, 3, 3) = AA.toRotationMatrix();
+    }
+    Eigen::Matrix4f transMatrix = Eigen::Matrix4f::Identity();
+    transMatrix.block(0, 3, 3, 1) = translation;
+    return transMatrix * rotMatrix;
 }
 
 Eigen::Matrix4f get_model_matrix(float rotation_angle, Eigen::Vector3f translation)
@@ -217,6 +232,19 @@ int main()
         Eigen::Vector3f(-1.3f,  1.0f, -1.5f)
     };
 
+    //glm::vec3 cubePositions[] = {
+    //    glm::vec3(0.0f,  0.0f,  0.0f),
+    //    glm::vec3(2.0f,  5.0f, -15.0f),
+    //    glm::vec3(-1.5f, -2.2f, -2.5f),
+    //    glm::vec3(-3.8f, -2.0f, -12.3f),
+    //    glm::vec3(2.4f, -0.4f, -3.5f),
+    //    glm::vec3(-1.7f,  3.0f, -7.5f),
+    //    glm::vec3(1.3f, -2.0f, -2.5f),
+    //    glm::vec3(1.5f,  2.0f, -2.5f),
+    //    glm::vec3(1.5f,  0.2f, -1.5f),
+    //    glm::vec3(-1.3f,  1.0f, -1.5f)
+    //};
+
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO); // 自绑定起，后续的Buffer绑定配置 都相当于记录在了VAO上
     glGenBuffers(1, &VBO);
@@ -226,7 +254,7 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
@@ -284,25 +312,26 @@ int main()
 
         auto i = 0;
         for (auto curP : cubePositions) {
-            if (i % 3) {
-                modelMatrix = get_model_matrix(
-                    glfwGetTime() * 50.0f * MY_PI / 180.0f, curP
-                );
-            }
-            else {
-                modelMatrix = get_model_matrix(
-                    20.0f * i * MY_PI / 180.0f, curP
-                );
-            }
+
+            //glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+            //model = glm::translate(model, cubePositions[i]);
+            //float angle = 20.0f * i;
+            //model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            //glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+
+            modelMatrix = get_model_matrix(0.0f, { 0.0,1.0,0.0 }, curP);
+            modelMatrix = modelMatrix * get_model_matrix(20.0f * i * MY_PI / 180.0f, { 1.0f, 0.3f, 0.5f }, { 0.0,0.0,0.0 });
+            glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "model"), 1, GL_FALSE, modelMatrix.data());
             ++i;
             viewMatrix = camera.GetViewMatrix();
             proMatrix = get_projection_matrix(camera.Zoom, (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
-            glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "model"), 1, GL_FALSE, modelMatrix.data());
+            //glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "model"), 1, GL_FALSE, modelMatrix.data());
             glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "view"), 1, GL_FALSE, viewMatrix.data());
             // glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
 
+            //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
             glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "projection"), 1, GL_FALSE, proMatrix.data());
-
+            //glUniformMatrix4fv(glGetUniformLocation(myshader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
             glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
             glDrawArrays(GL_TRIANGLES, 0, 36);
 

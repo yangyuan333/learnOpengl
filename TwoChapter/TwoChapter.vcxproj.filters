@@ -32,11 +32,16 @@
     <ClCompile Include="homework-createLight.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\data\shader\vertexShaderLight.vs">
-      <Filter>资源文件</Filter>
+    <ClCompile Include="..\3rdParty\OPENGL\glad\src\glad.c">
+      <Filter>头文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\data\shader\frugShaderLight.fs">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\shader\frugShaderLight.glsl">
       <Filter>资源文件</Filter>
-    </ClCompile>
+    </None>
+    <None Include="..\data\shader\vertexShaderLight.glsl">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

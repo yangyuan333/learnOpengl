@@ -3,9 +3,8 @@
 
 #include <glad/glad.h> // holds all OpenGL type declarations
 
-#include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
-
+#include <Eigen/Eigen>
 #include "shader.h"
 
 #include <string>
@@ -16,15 +15,15 @@ using namespace std;
 
 struct Vertex {
     // position
-    glm::vec3 Position;
+    Eigen::Vector3f Position;
     // normal
-    glm::vec3 Normal;
+    Eigen::Vector3f Normal;
     // texCoords
-    glm::vec2 TexCoords;
+    Eigen::Vector2f TexCoords;
     // tangent
-    glm::vec3 Tangent;
+    Eigen::Vector3f Tangent;
     // bitangent
-    glm::vec3 Bitangent;
+    Eigen::Vector3f Bitangent;
     //bone indexes which will influence this vertex
     int m_BoneIDs[MAX_BONE_INFLUENCE];
     //weights from each bone

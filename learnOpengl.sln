@@ -8,6 +8,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TwoChapter", "TwoChapter\TwoChapter.vcxproj", "{F627F20D-4B15-4175-9D48-DCA6A06D925B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThreeChapter", "ThreeChapter\ThreeChapter.vcxproj", "{26A8C4EE-EE1E-4FA4-BFCB-A443DF9A994D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1CA3E940-29A6-44C5-98EF-A45E5FB2C707} = {1CA3E940-29A6-44C5-98EF-A45E5FB2C707}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utils", "utils\utils.vcxproj", "{1CA3E940-29A6-44C5-98EF-A45E5FB2C707}"
 EndProject

@@ -73,7 +73,7 @@ int main()
     // init model data
     Model model("../data/model/nanosuit/nanosuit.obj");
     // init shader
-    Shader shader("../data/shader/vertexShaderLight.glsl", "../data/shader/frugShaderLight.glsl");
+    Shader shader("../data/shader/vertexThree.glsl", "../data/shader/frugThree.glsl");
     
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -81,10 +81,13 @@ int main()
 
     // begin render
     float lasttime = glfwGetTime();
-    while (glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window))
     {
         processInput(window, camera, glfwGetTime() - lasttime);
         lasttime = glfwGetTime();
+
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.use();
         // get MVP 
@@ -92,11 +95,37 @@ int main()
         Eigen::Matrix4f viewMatrix = camera.GetViewMatrix();
         Eigen::Matrix4f projectionMatrix = get_projection_matrix(camera.Zoom, (float)framebuffer_width / (float)framebuffer_height, 0.1f, 100.0f);
         
-        shader.setMat4("modelMatrix", modelMatrix);
+
+        shader.setMat4("modelMatrix", modelMatrix*0.1);
         shader.setMat4("viewMatrix", viewMatrix);
         shader.setMat4("projectionMatrix", projectionMatrix);
+		
+		// set uniform
+		shader.setFloat("shininess", 32.0f);
+		// set light
+		shader.setVec3("parallelLight.direction", { 0.0f,-0.0f,-1.0f });
+		shader.setVec3("parallelLight.ambient", { 0.05f, 0.05f, 0.05f });
+		shader.setVec3("parallelLight.diffuse", { 0.5f, 0.5f, 0.5f });
+		shader.setVec3("parallelLight.specular", { 0.5f, 0.5f, 0.5f });
 
-		shader.setFloat("")
+		shader.setVec3("pointLights[0].position", {0.0f,7.0f,1.0f});
+		shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+		shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+		shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+		shader.setFloat("pointLights[0].constant", 1.0f);
+		shader.setFloat("pointLights[0].linear", 0.045f);
+		shader.setFloat("pointLights[0].quadratic", 0.0075f);
+
+		shader.setVec3("spotLight.position", camera.Position);
+		shader.setVec3("spotLight.direction", camera.Front);
+		shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+		shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+		shader.setFloat("spotLight.constant", 1.0f);
+		shader.setFloat("spotLight.linear", 0.09f);
+		shader.setFloat("spotLight.quadratic", 0.032f);
+		shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
         model.Draw(shader);
 

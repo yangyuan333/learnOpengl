@@ -9,7 +9,7 @@ uniform mat4 projectionMatrix;
 
 out vec3 worldPos;
 out vec3 worldNormal;
-out vec3 TexCoord;
+out vec2 TexCoord;
 
 void main()
 {

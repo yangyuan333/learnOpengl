@@ -76,5 +76,5 @@ private:
 
 int main()
 {
-    
+    aiString a;
 }

@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="assimpTest.cpp" />
+    <ClCompile Include="modelRender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\OneChapter\shader.h" />
